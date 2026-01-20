@@ -1,11 +1,167 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
-    <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-    </content>
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-  </component>
-</module>
+class QueueImplementation {
+    // Part A: Queue using Array
+
+    static class ArrayQueue {
+        int[] arr;
+        int front, rear, size;
+
+        // Constructor
+        ArrayQueue(int capacity) {
+            arr = new int[capacity];
+            front = 0;
+            rear = 0;
+            size = 0;
+        }
+
+        // Enqueue with dynamic resizing
+        void enqueue(int value) {
+            if (size == arr.length) {
+                System.out.println("Array full. Resizing from " + arr.length + " to " + (arr.length * 2));
+                int[] newArr = new int[arr.length * 2];
+                for (int i = 0; i < size; i++) newArr[i] = arr[(front + i) % arr.length];
+                arr = newArr;
+                front = 0;
+                rear = size;
+            }
+            arr[rear] = value;
+            rear = (rear + 1) % arr.length;
+            size++;
+        }
+
+        // Dequeue
+        int dequeue() {
+            if (size == 0) return -1;
+            int value = arr[front];
+            front = (front + 1) % arr.length;
+            size--;
+            return value;
+        }
+
+        // Peek
+        int peek() {
+            return size == 0 ? -1 : arr[front];
+        }
+
+        // Display queue
+        void display() {
+            System.out.print("Queue elements: ");
+            for (int i = 0; i < size; i++) System.out.print(arr[(front + i) % arr.length] + " ");
+            System.out.println();
+        }
+
+        // Find min
+        int findMin() {
+            int min = Integer.MAX_VALUE;
+            for (int i = 0; i < size; i++)
+                if (arr[(front + i) % arr.length] < min) min = arr[(front + i) % arr.length];
+            return min;
+        }
+
+        // Find max
+        int findMax() {
+            int max = Integer.MIN_VALUE;
+            for (int i = 0; i < size; i++)
+                if (arr[(front + i) % arr.length] > max) max = arr[(front + i) % arr.length];
+            return max;
+        }
+    }
+    
+    // Part B: Queue using Linked LisT
+    static class LinkedListQueue {
+        class Node {
+            int value;
+            Node next;
+            Node(int value) { this.value = value; }
+        }
+
+        Node front, rear;
+
+        // Enqueue
+        void enqueue(int value) {
+            Node newNode = new Node(value);
+            if (rear == null) front = rear = newNode;
+            else { rear.next = newNode; rear = newNode; }
+        }
+
+        // Dequeue
+        int dequeue() {
+            if (front == null) return -1;
+            int val = front.value;
+            front = front.next;
+            if (front == null) rear = null;
+            return val;
+        }
+
+        // Peek
+        int peek() { return front == null ? -1 : front.value; }
+
+        // Find min
+        int findMin() {
+            int min = Integer.MAX_VALUE;
+            Node temp = front;
+            while (temp != null) {
+                if (temp.value < min) min = temp.value;
+                temp = temp.next;
+            }
+            return min;
+        }
+
+        // Find max
+        int findMax() {
+            int max = Integer.MIN_VALUE;
+            Node temp = front;
+            while (temp != null) {
+                if (temp.value > max) max = temp.value;
+                temp = temp.next;
+            }
+            return max;
+        }
+
+        // Display queue
+        void display() {
+            System.out.print("Queue elements: ");
+            Node temp = front;
+            while (temp != null) {
+                System.out.print(temp.value + " ");
+                temp = temp.next;
+            }
+            System.out.println();
+        }
+    }
+
+    // ===========================
+    // Main Method: Demonstration
+    // ===========================
+    public static void main(String[] args) {
+
+        System.out.println("=== Array Queue Demo ===");
+        ArrayQueue arrayQueue = new ArrayQueue(3); // initial capacity = 3
+        arrayQueue.enqueue(10);
+        arrayQueue.enqueue(20);
+        arrayQueue.enqueue(30);
+        arrayQueue.enqueue(40); // triggers resizing
+        arrayQueue.display();
+        System.out.println("Peek: " + arrayQueue.peek());
+        System.out.println("Dequeued: " + arrayQueue.dequeue());
+        arrayQueue.display();
+        System.out.println("Min: " + arrayQueue.findMin());
+        System.out.println("Max: " + arrayQueue.findMax());
+
+        System.out.println("\n=== Linked List Queue Demo ===");
+        LinkedListQueue llQueue = new LinkedListQueue();
+        llQueue.enqueue(10);
+        llQueue.enqueue(20);
+        llQueue.enqueue(30);
+        llQueue.enqueue(40);
+        llQueue.display();
+        System.out.println("Peek: " + llQueue.peek());
+        System.out.println("Dequeued: " + llQueue.dequeue());
+        llQueue.display();
+        System.out.println("Min: " + llQueue.findMin());
+        System.out.println("Max: " + llQueue.findMax());
+
+        System.out.println("\n=== Comparison ===");
+        System.out.println("Array Queue -> Enqueue: O(1) avg, O(n) worst on resize, Dequeue: O(1), Memory: Fixed array (may waste space)");
+        System.out.println("Linked List Queue -> Enqueue/Dequeue: O(1), Memory: Flexible, no extra unused space");
+    }
+}
