@@ -1,11 +1,79 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
-    <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-    </content>
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-  </component>
-</module>
+class SortingAlgorithms {
+
+    // Merge Sort
+    static void mergeSort(int[] arr, int left, int right) {
+        if (left < right) {
+            int mid = (left + right) / 2;
+            mergeSort(arr, left, mid);
+            mergeSort(arr, mid + 1, right);
+            merge(arr, left, mid, right);
+        }
+    }
+
+    static void merge(int[] arr, int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+        int[] leftArr = new int[n1];
+        int[] rightArr = new int[n2];
+
+        for (int i = 0; i < n1; i++) leftArr[i] = arr[left + i];
+        for (int j = 0; j < n2; j++) rightArr[j] = arr[mid + 1 + j];
+
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) {
+            if (leftArr[i] <= rightArr[j]) arr[k++] = leftArr[i++];
+            else arr[k++] = rightArr[j++];
+        }
+        while (i < n1) arr[k++] = leftArr[i++];
+        while (j < n2) arr[k++] = rightArr[j++];
+    }
+
+    // Quick Sort
+    static void quickSort(int[] arr, int low, int high) {
+        if (low < high) {
+            int pi = partition(arr, low, high);
+            quickSort(arr, low, pi - 1);
+            quickSort(arr, pi + 1, high);
+        }
+    }
+
+    static int partition(int[] arr, int low, int high) {
+        int pivot = arr[high];
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+            }
+        }
+        int temp = arr[i + 1]; arr[i + 1] = arr[high]; arr[high] = temp;
+        return i + 1;
+    }
+
+    public static void main(String[] args) {
+        int[] arrayForMerge = {5, 1, 4, 2, 8};
+        int[] arrayForQuick = {5, 1, 4, 2, 8};
+
+        // Original array
+        System.out.print("Original Array: ");
+        for (int val : arrayForMerge) System.out.print(val + " ");
+        System.out.println();
+
+        // Merge Sort
+        mergeSort(arrayForMerge, 0, arrayForMerge.length - 1);
+        System.out.print("Merge Sort Result: ");
+        for (int val : arrayForMerge) System.out.print(val + " ");
+        System.out.println();
+
+        // Quick Sort
+        quickSort(arrayForQuick, 0, arrayForQuick.length - 1);
+        System.out.print("Quick Sort Result: ");
+        for (int val : arrayForQuick) System.out.print(val + " ");
+        System.out.println();
+
+        // Comparison
+        System.out.println("\nComparison:");
+        System.out.println("Merge Sort -> Time: O(n log n) all cases, Space: O(n)");
+        System.out.println("Quick Sort -> Time: O(n log n) average, O(n^2) worst, Space: O(log n) recursion stack");
+    }
+}
