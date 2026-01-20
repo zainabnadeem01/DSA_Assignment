@@ -1,161 +1,136 @@
-class DoublyLinkedListDemo {
-
+class BinarySearchTree {
     // Node class
-    static class Node {
+    class Node {
         int value;
-        Node next, prev;
+        Node left, right;
         Node(int value) { this.value = value; }
     }
+    Node root;
+    // 1️⃣ Insert node
+    Node insert(Node current, int value) {
+        if (current == null) return new Node(value);
+        if (value < current.value) current.left = insert(current.left, value);
+        else current.right = insert(current.right, value);
+        return current;
+    }
+    void insert(int value) { root = insert(root, value); }
 
-    Node head, tail;
+    // 2️⃣ Traversals
+    void inorder(Node current) {
+        if (current == null) return;
+        inorder(current.left);
+        System.out.print(current.value + " ");
+        inorder(current.right);
+    }
+    void preorder(Node current) {
+        if (current == null) return;
+        System.out.print(current.value + " ");
+        preorder(current.left);
+        preorder(current.right);
+    }
 
-    // 1️⃣ Insert at beginning → O(1)
-    void insertAtBeginning(int value) {
-        Node newNode = new Node(value);
-        if (head == null) { head = tail = newNode; }
+    void postorder(Node current) {
+        if (current == null) return;
+        postorder(current.left);
+        postorder(current.right);
+        System.out.print(current.value + " ");
+    }
+
+    // 3️⃣ Search node
+    Node search(Node current, int key) {
+        if (current == null || current.value == key) return current;
+        return (key < current.value) ? search(current.left, key) : search(current.right, key);
+    }
+
+    // 4️⃣ Delete node
+    Node delete(Node current, int key) {
+        if (current == null) return null;
+        if (key < current.value) current.left = delete(current.left, key);
+        else if (key > current.value) current.right = delete(current.right, key);
         else {
-            newNode.next = head;
-            head.prev = newNode;
-            head = newNode;
+            // Node with only one child or no child
+            if (current.left == null) return current.right;
+            if (current.right == null) return current.left;
+            // Node with two children: get inorder successor
+            current.value = minValue(current.right);
+            current.right = delete(current.right, current.value);
         }
+        return current;
     }
 
-    // 2️⃣ Insert at end → O(1)
-    void insertAtEnd(int value) {
-        Node newNode = new Node(value);
-        if (tail == null) { head = tail = newNode; }
-        else {
-            tail.next = newNode;
-            newNode.prev = tail;
-            tail = newNode;
-        }
+    // 5️⃣ Find minimum
+    int minValue(Node current) {
+        while (current.left != null) current = current.left;
+        return current.value;
     }
 
-    // 3️⃣ Display forward → O(n)
-    void displayForward() {
-        System.out.print("Forward: ");
-        Node temp = head;
-        while (temp != null) {
-            System.out.print(temp.value + " ");
-            temp = temp.next;
-        }
-        System.out.println();
+    // 6️⃣ Find maximum
+    int maxValue(Node current) {
+        while (current.right != null) current = current.right;
+        return current.value;
     }
 
-    // Display backward → O(n)
-    void displayBackward() {
-        System.out.print("Backward: ");
-        Node temp = tail;
-        while (temp != null) {
-            System.out.print(temp.value + " ");
-            temp = temp.prev;
-        }
-        System.out.println();
+    // 7️⃣ Count total nodes
+    int countNodes(Node current) {
+        if (current == null) return 0;
+        return 1 + countNodes(current.left) + countNodes(current.right);
     }
 
-    // 4️⃣ Delete first node → O(1)
-    void deleteFirst() {
-        if (head == null) return;
-        if (head == tail) { head = tail = null; return; }
-        head = head.next;
-        head.prev = null;
+    // 8️⃣ Count leaf nodes
+    int countLeafNodes(Node current) {
+        if (current == null) return 0;
+        if (current.left == null && current.right == null) return 1;
+        return countLeafNodes(current.left) + countLeafNodes(current.right);
     }
 
-    // Delete last node → O(1)
-    void deleteLast() {
-        if (tail == null) return;
-        if (head == tail) { head = tail = null; return; }
-        tail = tail.prev;
-        tail.next = null;
+    // 9️⃣ Tree height
+    int height(Node current) {
+        if (current == null) return 0;
+        return 1 + Math.max(height(current.left), height(current.right));
     }
 
-    // 5️⃣ Delete node by value → O(n)
-    void deleteByValue(int value) {
-        Node temp = head;
-        while (temp != null && temp.value != value) temp = temp.next;
-        if (temp == null) return; // value not found
-        if (temp == head) deleteFirst();
-        else if (temp == tail) deleteLast();
-        else {
-            temp.prev.next = temp.next;
-            temp.next.prev = temp.prev;
-        }
-    }
-
-    // 6️⃣ Delete node before a given value → O(n)
-    void deleteBeforeValue(int value) {
-        Node temp = head;
-        while (temp != null && temp.value != value) temp = temp.next;
-        if (temp == null || temp.prev == null) return; // no node before
-        deleteByValue(temp.prev.value);
-    }
-
-    // 7️⃣ Delete node after a given value → O(n)
-    void deleteAfterValue(int value) {
-        Node temp = head;
-        while (temp != null && temp.value != value) temp = temp.next;
-        if (temp == null || temp.next == null) return; // no node after
-        deleteByValue(temp.next.value);
-    }
-
-    // 8️⃣ Find minimum → O(n)
-    int findMin() {
-        if (head == null) return -1;
-        int min = head.value;
-        Node temp = head.next;
-        while (temp != null) {
-            if (temp.value < min) min = temp.value;
-            temp = temp.next;
-        }
-        return min;
-    }
-
-    // Find maximum → O(n)
-    int findMax() {
-        if (head == null) return -1;
-        int max = head.value;
-        Node temp = head.next;
-        while (temp != null) {
-            if (temp.value > max) max = temp.value;
-            temp = temp.next;
-        }
-        return max;
-    }
+    // Main method
     public static void main(String[] args) {
-        DoublyLinkedListDemo dll = new DoublyLinkedListDemo();
+        BinarySearchTree bst = new BinarySearchTree();
+        int[] elements = {50, 30, 70, 20, 40, 60, 80};
 
-        // Insert at beginning
-        dll.insertAtBeginning(10);
-        dll.insertAtBeginning(20);
+        // Insert elements
+        for (int val : elements) bst.insert(val);
 
-        // Insert at end
-        dll.insertAtEnd(30);
-        dll.insertAtEnd(40);
-        dll.insertAtEnd(5);
-        dll.insertAtEnd(50);
+        // Traversals
+        System.out.print("Inorder traversal: ");
+        bst.inorder(bst.root);
+        System.out.println();
 
-        // Display
-        dll.displayForward();
-        dll.displayBackward();
+        System.out.print("Preorder traversal: ");
+        bst.preorder(bst.root);
+        System.out.println();
 
-        // Delete operations
-        dll.deleteFirst();
-        dll.deleteLast();
-        dll.deleteByValue(20);
-        dll.deleteBeforeValue(30);
-        dll.deleteAfterValue(20);
+        System.out.print("Postorder traversal: ");
+        bst.postorder(bst.root);
+        System.out.println();
 
-        // Display after deletions
-        System.out.print("After deletions Forward: ");
-        dll.displayForward();
-        System.out.println("Minimum value: " + dll.findMin());
-        System.out.println("Maximum value: " + dll.findMax());
+        // Search 60
+        System.out.println("Search 60: " + (bst.search(bst.root, 60) != null));
 
-        // Time complexity summary
-        System.out.println("\nTime Complexities:");
-        System.out.println("Insert at beginning/end: O(1)");
-        System.out.println("Delete first/last: O(1)");
-        System.out.println("Delete by value / before / after: O(n)");
-        System.out.println("Find min/max: O(n)");
+        // Delete 80
+        bst.root = bst.delete(bst.root, 80);
+        System.out.print("Inorder after deleting 80: ");
+        bst.inorder(bst.root);
+        System.out.println();
+
+        // Min and Max
+        System.out.println("Minimum value: " + bst.minValue(bst.root));
+        System.out.println("Maximum value: " + bst.maxValue(bst.root));
+        // Node counts
+        System.out.println("Total nodes: " + bst.countNodes(bst.root));
+        System.out.println("Leaf nodes: " + bst.countLeafNodes(bst.root));
+        // Tree height
+        System.out.println("Tree height: " + bst.height(bst.root));
+        // Complexity explanation
+        System.out.println("\nBST Time Complexities:");
+        System.out.println("Insert/Search/Delete: O(h) → O(log n) average, O(n) worst");
+        System.out.println("Min/Max: O(h)");
+        System.out.println("Traversals: O(n)");
     }
 }
