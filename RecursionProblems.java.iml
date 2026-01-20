@@ -1,11 +1,61 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
-    <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-    </content>
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-  </component>
-</module>
+class RecursionProblems {
+
+    //  Factorial of a number
+    // Base case: n == 0
+    // Recursive case: n * factorial(n-1)
+    static int factorial(int number) {
+        if (number == 0) return 1;
+        return number * factorial(number - 1);
+    }
+
+    //  Fibonacci number at position n
+    // Base cases: n == 0 -> 0, n == 1 -> 1
+    // Recursive case: fib(n-1) + fib(n-2)
+    static int fibonacci(int position) {
+        if (position == 0) return 0;
+        if (position == 1) return 1;
+        return fibonacci(position - 1) + fibonacci(position - 2);
+    }
+
+    // Sum of array elements
+    // Base case: n == 0
+    // Recursive case: last element + sum of remaining
+    static int sumArray(int[] arr, int n) {
+        if (n == 0) return 0;
+        return arr[n - 1] + sumArray(arr, n - 1);
+    }
+
+    //  Check if array is sorted in ascending order
+    // Base case: size 0 or 1 -> sorted
+    // Recursive case: check last two elements and rest of array
+    static boolean isSorted(int[] arr, int n) {
+        if (n == 0 || n == 1) return true;
+        return arr[n - 2] <= arr[n - 1] && isSorted(arr, n - 1);
+    }
+
+    // Find minimum element in array
+    // Base case: single element
+    // Recursive case: min(last element, min of rest)
+    static int findMin(int[] arr, int n) {
+        if (n == 1) return arr[0];
+        return Math.min(arr[n - 1], findMin(arr, n - 1));
+    }
+    //  Find maximum element in array
+    // Base case: single element
+    // Recursive case: max(last element, max of rest)
+    static int findMax(int[] arr, int n) {
+        if (n == 1) return arr[0];
+        return Math.max(arr[n - 1], findMax(arr, n - 1));
+    }
+    public static void main(String[] args) {
+        int[] array = {2, 4, 6, 8};
+        int[] sortedArray = {3, 5, 7, 9};
+
+        System.out.println("1 Factorial of 5: " + factorial(5));
+        System.out.println("2 Fibonacci number at position 6: " + fibonacci(6));
+        System.out.println("3 Sum of array {2,4,6,8}: " + sumArray(array, array.length));
+        System.out.println("4 Is array {3,5,7,9} sorted? " + isSorted(sortedArray, sortedArray.length));
+        System.out.println("5 Minimum in array {2,4,6,8}: " + findMin(array, array.length));
+        System.out.println("6 Maximum in array {2,4,6,8}: " + findMax(array, array.length));
+    }
+}
