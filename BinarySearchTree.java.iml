@@ -1,11 +1,143 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
-    <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-    </content>
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-  </component>
-</module>
+class BinarySearchTree {
+
+    // Node class
+    class Node {
+        int value;
+        Node left, right;
+        Node(int value) { this.value = value; }
+    }
+
+    Node root;
+
+    // 1️⃣ Insert node
+    Node insert(Node current, int value) {
+        if (current == null) return new Node(value);
+        if (value < current.value) current.left = insert(current.left, value);
+        else current.right = insert(current.right, value);
+        return current;
+    }
+
+    void insert(int value) { root = insert(root, value); }
+
+    // 2️⃣ Traversals
+    void inorder(Node current) {
+        if (current == null) return;
+        inorder(current.left);
+        System.out.print(current.value + " ");
+        inorder(current.right);
+    }
+
+    void preorder(Node current) {
+        if (current == null) return;
+        System.out.print(current.value + " ");
+        preorder(current.left);
+        preorder(current.right);
+    }
+
+    void postorder(Node current) {
+        if (current == null) return;
+        postorder(current.left);
+        postorder(current.right);
+        System.out.print(current.value + " ");
+    }
+
+    // 3️⃣ Search node
+    Node search(Node current, int key) {
+        if (current == null || current.value == key) return current;
+        return (key < current.value) ? search(current.left, key) : search(current.right, key);
+    }
+
+    // 4️⃣ Delete node
+    Node delete(Node current, int key) {
+        if (current == null) return null;
+        if (key < current.value) current.left = delete(current.left, key);
+        else if (key > current.value) current.right = delete(current.right, key);
+        else {
+            // Node with only one child or no child
+            if (current.left == null) return current.right;
+            if (current.right == null) return current.left;
+            // Node with two children: get inorder successor
+            current.value = minValue(current.right);
+            current.right = delete(current.right, current.value);
+        }
+        return current;
+    }
+
+    // 5️⃣ Find minimum
+    int minValue(Node current) {
+        while (current.left != null) current = current.left;
+        return current.value;
+    }
+
+    // 6️⃣ Find maximum
+    int maxValue(Node current) {
+        while (current.right != null) current = current.right;
+        return current.value;
+    }
+
+    // 7️⃣ Count total nodes
+    int countNodes(Node current) {
+        if (current == null) return 0;
+        return 1 + countNodes(current.left) + countNodes(current.right);
+    }
+
+    // 8️⃣ Count leaf nodes
+    int countLeafNodes(Node current) {
+        if (current == null) return 0;
+        if (current.left == null && current.right == null) return 1;
+        return countLeafNodes(current.left) + countLeafNodes(current.right);
+    }
+
+    // 9️ Tree height
+    int height(Node current) {
+        if (current == null) return 0;
+        return 1 + Math.max(height(current.left), height(current.right));
+    }
+
+    public static void main(String[] args) {
+        BinarySearchTree bst = new BinarySearchTree();
+        int[] elements = {50, 30, 70, 20, 40, 60, 80};
+
+        // Insert elements
+        for (int val : elements) bst.insert(val);
+
+        // Traversals
+        System.out.print("Inorder traversal: ");
+        bst.inorder(bst.root);
+        System.out.println();
+
+        System.out.print("Preorder traversal: ");
+        bst.preorder(bst.root);
+        System.out.println();
+
+        System.out.print("Postorder traversal: ");
+        bst.postorder(bst.root);
+        System.out.println();
+
+        // Search 60
+        System.out.println("Search 60: " + (bst.search(bst.root, 60) != null));
+
+        // Delete 80
+        bst.root = bst.delete(bst.root, 80);
+        System.out.print("Inorder after deleting 80: ");
+        bst.inorder(bst.root);
+        System.out.println();
+
+        // Min and Max
+        System.out.println("Minimum value: " + bst.minValue(bst.root));
+        System.out.println("Maximum value: " + bst.maxValue(bst.root));
+
+        // Node counts
+        System.out.println("Total nodes: " + bst.countNodes(bst.root));
+        System.out.println("Leaf nodes: " + bst.countLeafNodes(bst.root));
+
+        // Tree height
+        System.out.println("Tree height: " + bst.height(bst.root));
+
+        // Complexity explanation
+        System.out.println("\nBST Time Complexities:");
+        System.out.println("Insert/Search/Delete: O(h) → O(log n) average, O(n) worst");
+        System.out.println("Min/Max: O(h)");
+        System.out.println("Traversals: O(n)");
+    }
+}
